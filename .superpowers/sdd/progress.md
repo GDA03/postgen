@@ -8,6 +8,6 @@
 - [x] Task 5: Caption Generator (`@postgen/core` — Generator Module) (complete)
 - [x] Task 6: Template Card Generator (`@postgen/core` — Cards Module) (complete)
 - [x] Task 7: CLI Application (`postgen`) (complete)
-- [ ] Task 8: Web Dashboard (`@postgen/web`)
+- [x] Task 8: Web Dashboard (`@postgen/web`) (complete)
 - [ ] Task 9: CI/CD Pipeline
 - [ ] Task 10: Documentation & Polish
