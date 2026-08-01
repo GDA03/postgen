@@ -2,7 +2,7 @@
 
 ## Tasks
 - [x] Task 1: Monorepo Scaffolding (complete)
-- [ ] Task 2: Shared Types Package (`@postgen/shared`)
+- [x] Task 2: Shared Types Package (`@postgen/shared`) (complete)
 - [ ] Task 3: Project Scanner (`@postgen/core` — Scanner Module)
 - [ ] Task 4: AI Provider Abstraction (`@postgen/ai`)
 - [ ] Task 5: Caption Generator (`@postgen/core` — Generator Module)
