@@ -60,9 +60,15 @@ importers:
 
   packages/core:
     dependencies:
+      '@postgen/ai':
+        specifier: workspace:*
+        version: link:../ai
       '@postgen/shared':
         specifier: workspace:*
         version: link:../shared
+      ai:
+        specifier: ^4.1.60
+        version: 4.3.19(react@19.2.8)(zod@3.25.76)
       fast-glob:
         specifier: ^3.3.3
         version: 3.3.3
@@ -72,6 +78,9 @@ importers:
       simple-git:
         specifier: ^3.27.0
         version: 3.36.0
+      zod:
+        specifier: ^3.24.2
+        version: 3.25.76
     devDependencies:
       '@types/fs-extra':
         specifier: ^11.0.4

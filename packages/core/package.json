@@ -18,10 +18,13 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
+    "@postgen/ai": "workspace:*",
     "@postgen/shared": "workspace:*",
+    "ai": "^4.1.60",
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.0",
-    "simple-git": "^3.27.0"
+    "simple-git": "^3.27.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
