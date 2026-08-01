@@ -19,14 +19,25 @@ export function SettingsPanel({ config, onConfigChange, onClose }: SettingsPanel
     { id: 'custom', label: 'Custom OpenAI-Compatible API' },
   ];
 
+  const modelSuggestions: Record<string, string[]> = {
+    gemini: ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'],
+    openai: ['gpt-4o', 'gpt-4o-mini'],
+    anthropic: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022'],
+    openrouter: ['google/gemini-2.0-flash-001', 'openai/gpt-4o-mini', 'anthropic/claude-3.5-sonnet'],
+    '9router': ['gpt-4o', 'gpt-4o-mini', 'claude-3-5-sonnet'],
+  };
+
   const handleProviderSelect = (provider: AIProvider) => {
     const selected = providers.find((p) => p.id === provider);
     onConfigChange({
       ...config,
       provider,
       baseUrl: selected?.defaultBaseUrl ?? config.baseUrl,
+      model: undefined, // reset to default
     });
   };
+
+  const currentSuggestions = modelSuggestions[config.provider] ?? [];
 
   return (
     <div
@@ -55,7 +66,7 @@ export function SettingsPanel({ config, onConfigChange, onClose }: SettingsPanel
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
-            ⚙️ AI Provider & Model Settings
+            ⚙️ AI Provider &amp; Model Settings
           </h3>
           <button
             onClick={onClose}
@@ -118,15 +129,37 @@ export function SettingsPanel({ config, onConfigChange, onClose }: SettingsPanel
 
           <div>
             <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', color: 'var(--text-secondary)' }}>
-              Model Override (Optional)
+              Model Override
             </label>
             <input
               type="text"
               className="input-field"
-              placeholder={config.provider === 'gemini' ? 'gemini-2.0-flash' : 'gpt-4o'}
+              placeholder={currentSuggestions[0] ?? 'Default model'}
               value={config.model ?? ''}
               onChange={(e) => onConfigChange({ ...config, model: e.target.value || undefined })}
             />
+
+            {currentSuggestions.length > 0 && (
+              <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Quick Select:</span>
+                {currentSuggestions.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    className="chip-btn"
+                    style={{
+                      fontSize: '11px',
+                      padding: '3px 8px',
+                      background: config.model === m ? 'rgba(99, 102, 241, 0.2)' : undefined,
+                      borderColor: config.model === m ? 'var(--accent-primary)' : undefined,
+                    }}
+                    onClick={() => onConfigChange({ ...config, model: m })}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
