@@ -30,6 +30,7 @@ export async function serveCommand(options: ServeOptions = {}): Promise<void> {
   const child = spawn(npmCmd, ['next', 'dev', '-p', String(port)], {
     cwd: webDir,
     stdio: ['inherit', 'pipe', 'pipe'],
+    shell: true,
     env: { ...process.env, PORT: String(port) },
   });
 
