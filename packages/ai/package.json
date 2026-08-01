@@ -1,0 +1,33 @@
+{
+  "name": "@postgen/ai",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^1.1.15",
+    "@ai-sdk/google": "^1.1.20",
+    "@ai-sdk/openai": "^1.2.1",
+    "@openrouter/ai-sdk-provider": "^0.7.5",
+    "@postgen/shared": "workspace:*",
+    "ai": "^4.1.60",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "vitest": "^3.0.0"
+  }
+}
