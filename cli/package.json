@@ -1,0 +1,50 @@
+{
+  "name": "postgen",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "AI-powered LinkedIn post generator from your project directory",
+  "bin": {
+    "postgen": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "linkedin",
+    "ai",
+    "content-generator",
+    "developer-tools",
+    "cli"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/postgen/postgen"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@postgen/ai": "workspace:*",
+    "@postgen/core": "workspace:*",
+    "@postgen/shared": "workspace:*",
+    "chalk": "^5.4.1",
+    "cli-table3": "^0.6.5",
+    "clipboardy": "^4.0.0",
+    "commander": "^13.1.0",
+    "conf": "^13.1.0",
+    "inquirer": "^12.4.2",
+    "ora": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "tsup": "^8.0.0",
+    "vitest": "^3.0.0"
+  }
+}
