@@ -116,7 +116,7 @@ export interface LinkedInPost {
 
 // ---- Config Types ----
 
-export type AIProvider = 'gemini' | 'openai' | 'anthropic' | 'openrouter' | 'custom';
+export type AIProvider = 'gemini' | 'openai' | 'anthropic' | 'openrouter' | '9router' | 'custom';
 
 export interface PostGenConfig {
   provider: AIProvider;

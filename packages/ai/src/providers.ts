@@ -7,42 +7,56 @@ import type { LanguageModelV1 } from 'ai';
 import type { PostGenConfig } from '@postgen/shared';
 
 const DEFAULT_MODELS: Record<string, string> = {
-  gemini: 'gemini-2.5-flash',
+  gemini: 'gemini-2.0-flash',
   openai: 'gpt-4o',
-  anthropic: 'claude-sonnet-4-20250514',
-  openrouter: 'google/gemini-2.5-flash',
+  anthropic: 'claude-3-5-sonnet-20241022',
+  openrouter: 'google/gemini-2.0-flash-001',
+  '9router': 'gpt-4o',
 };
 
 export function createModel(config: PostGenConfig): LanguageModelV1 {
-  if (!config.apiKey) {
-    throw new Error(
-      'API key not configured. Run: postgen config set apiKey <your-key>',
-    );
-  }
-
   const model = config.model ?? DEFAULT_MODELS[config.provider] ?? 'gpt-4o';
 
   switch (config.provider) {
     case 'gemini': {
+      if (!config.apiKey) {
+        throw new Error('Gemini API key not configured. Run: postgen config set apiKey <your-key>');
+      }
       const googleProvider = createGoogleGenerativeAI({ apiKey: config.apiKey });
       return googleProvider(model) as unknown as LanguageModelV1;
     }
 
     case 'openai': {
+      if (!config.apiKey) {
+        throw new Error('OpenAI API key not configured. Run: postgen config set apiKey <your-key>');
+      }
       const openaiProvider = createOpenAI({ apiKey: config.apiKey });
       return openaiProvider(model) as unknown as LanguageModelV1;
     }
 
     case 'anthropic': {
+      if (!config.apiKey) {
+        throw new Error('Anthropic API key not configured. Run: postgen config set apiKey <your-key>');
+      }
       const anthropicProvider = createAnthropic({ apiKey: config.apiKey });
       return anthropicProvider(model) as unknown as LanguageModelV1;
     }
 
     case 'openrouter': {
-      const orProvider = createOpenRouter({
-        apiKey: config.apiKey,
-      });
+      if (!config.apiKey) {
+        throw new Error('OpenRouter API key not configured. Run: postgen config set apiKey <your-key>');
+      }
+      const orProvider = createOpenRouter({ apiKey: config.apiKey });
       return orProvider(model) as unknown as LanguageModelV1;
+    }
+
+    case '9router': {
+      const baseUrl = config.baseUrl ?? 'http://localhost:9000/v1';
+      const routerOpenAI = createOpenAI({
+        apiKey: config.apiKey || '9router',
+        baseURL: baseUrl,
+      });
+      return routerOpenAI(model) as unknown as LanguageModelV1;
     }
 
     case 'custom': {
@@ -50,7 +64,7 @@ export function createModel(config: PostGenConfig): LanguageModelV1 {
         throw new Error('Custom provider requires baseUrl. Run: postgen config set baseUrl <url>');
       }
       const customOpenAI = createOpenAI({
-        apiKey: config.apiKey,
+        apiKey: config.apiKey || 'custom',
         baseURL: config.baseUrl,
       });
       return customOpenAI(model) as unknown as LanguageModelV1;

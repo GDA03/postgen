@@ -12,44 +12,82 @@ export function PostPreview({ post }: PostPreviewProps) {
   if (!variation) return null;
 
   return (
-    <div className="glass-card" style={{ padding: '24px' }}>
-      <h3 style={{ color: 'var(--accent-secondary)', marginBottom: '16px' }}>👀 LinkedIn Preview</h3>
+    <div className="glass-panel animate-fade-in" style={{ padding: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)' }}>
+          👀 Live LinkedIn Preview
+        </h3>
+        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+          {post.estimatedReadTime}
+        </span>
+      </div>
 
-      <div style={{
-        background: '#ffffff',
-        borderRadius: 'var(--radius-md)',
-        padding: '20px',
-        maxWidth: '550px',
-        margin: '0 auto',
-        color: '#000000',
-      }}>
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
-          <div style={{
-            width: '48px', height: '48px', borderRadius: '50%',
-            background: 'var(--accent-gradient)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'white', fontWeight: 700, fontSize: '18px',
-          }}>
+      {/* LinkedIn Post Container */}
+      <div
+        style={{
+          background: '#ffffff',
+          borderRadius: 'var(--radius-md)',
+          padding: '20px',
+          color: '#000000',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+          border: '1px solid #e2e8f0',
+        }}
+      >
+        {/* Profile Header */}
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '14px' }}>
+          <div
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontWeight: 700,
+              fontSize: '18px',
+            }}
+          >
             {post.projectContext.name.charAt(0).toUpperCase()}
           </div>
           <div>
-            <div style={{ fontWeight: 600, fontSize: '14px' }}>You</div>
-            <div style={{ fontSize: '12px', color: '#666' }}>Developer · Just now</div>
+            <div style={{ fontWeight: 600, fontSize: '14px', color: '#0f172a' }}>You</div>
+            <div style={{ fontSize: '12px', color: '#64748b' }}>Software Developer · Just now 🌐</div>
           </div>
         </div>
 
-        <div style={{ fontSize: '14px', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+        {/* Post Text Body */}
+        <div
+          style={{
+            fontSize: '14px',
+            lineHeight: 1.65,
+            whiteSpace: 'pre-wrap',
+            color: '#1e293b',
+            wordBreak: 'break-word',
+          }}
+        >
           {variation.caption}
         </div>
 
-        <div style={{
-          display: 'flex', gap: '24px', marginTop: '16px', paddingTop: '12px',
-          borderTop: '1px solid #e5e5e5', fontSize: '13px', color: '#666',
-        }}>
-          <span>👍 Like</span>
-          <span>💬 Comment</span>
-          <span>🔄 Repost</span>
-          <span>📤 Send</span>
+        {/* Social Engagement Mockup Bar */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: '16px',
+            paddingTop: '12px',
+            borderTop: '1px solid #e2e8f0',
+            fontSize: '13px',
+            color: '#64748b',
+            fontWeight: 500,
+          }}
+        >
+          <span style={{ cursor: 'pointer' }}>👍 Like</span>
+          <span style={{ cursor: 'pointer' }}>💬 Comment</span>
+          <span style={{ cursor: 'pointer' }}>🔄 Repost</span>
+          <span style={{ cursor: 'pointer' }}>📤 Send</span>
         </div>
       </div>
     </div>
