@@ -4,6 +4,7 @@ import { generateCommand } from './commands/generate.js';
 import { cardCommand } from './commands/card.js';
 import { configSetCommand, configListCommand, configResetCommand } from './commands/config.js';
 import { serveCommand } from './commands/serve.js';
+import { showInteractiveMenu } from './ui/menu.js';
 
 const program = new Command();
 
@@ -16,7 +17,8 @@ program
   .command('generate')
   .alias('gen')
   .description('Generate a LinkedIn post from a project directory')
-  .argument('<path>', 'Path to the project directory')
+  .argument('[path]', 'Path to the project directory')
+  .option('-i, --interactive', 'Run in interactive menu mode')
   .option('--tone <tone>', 'Post tone: professional, casual, technical, storytelling', 'professional')
   .option('--length <length>', 'Post length: short, medium, long', 'medium')
   .option('--lang <language>', 'Post language: en, id, auto', 'en')
@@ -26,11 +28,15 @@ program
   .option('--template <name>', 'Card template name', 'modern-dark')
   .option('--package <path>', 'Specific package in monorepo to scan')
   .option('-o, --output <dir>', 'Output directory for generated files', '.')
-  .action((projectPath, options) => {
-    generateCommand(projectPath, {
-      ...options,
-      variations: parseInt(options.variations, 10),
-    });
+  .action(async (projectPath, options) => {
+    if (options.interactive || !projectPath) {
+      await showInteractiveMenu();
+    } else {
+      await generateCommand(projectPath, {
+        ...options,
+        variations: parseInt(options.variations, 10),
+      });
+    }
   });
 
 program
@@ -70,12 +76,13 @@ program
   .action((options) => serveCommand({ port: parseInt(options.port, 10) }));
 
 program
-  .argument('[path]', 'Project path (shortcut for generate)')
-  .action((projectPath) => {
-    if (projectPath) {
-      generateCommand(projectPath, { variations: 3 });
+  .argument('[path]', 'Project path (or run interactive menu if omitted)')
+  .option('-i, --interactive', 'Run interactive menu')
+  .action(async (projectPath, options) => {
+    if (options.interactive || !projectPath) {
+      await showInteractiveMenu();
     } else {
-      program.help();
+      await generateCommand(projectPath, { variations: 3 });
     }
   });
 

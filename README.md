@@ -35,21 +35,29 @@ npx postgen serve
 ## 💻 CLI Usage
 
 ```bash
-# Basic post generation
+# 🎯 Interactive CLI Menu (keyboard arrow-key navigation)
+npx postgen
+# or
+npx postgen -i
+
+# 🚀 Direct post generation
 postgen ./my-project
 
-# Options
+# ⚙️ Custom options
 postgen generate ./my-project --tone=storytelling --length=medium --lang=en --variations=3
 
-# Monorepo support
+# 📦 Monorepo package scanning
 postgen generate ./my-monorepo --package=apps/web
 
-# Generate template card only
+# 🖼️ Generate template card only
 postgen card ./my-project --template=modern-dark
 
-# Configure API key and provider
+# 🌐 Launch local Web Dashboard from CLI menu or directly
+postgen serve
+
+# 🔑 Configure API key and provider
 postgen config set provider gemini
-postgen config set apiKey gsk_xxxxx
+postgen config set apiKey your-api-key
 postgen config list
 ```
 
