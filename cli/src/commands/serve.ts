@@ -1,7 +1,7 @@
 // cli/src/commands/serve.ts
 import chalk from 'chalk';
 import { spawn } from 'child_process';
-import { printHeader, printError, printSuccess } from '../ui/output.js';
+import { printHeader, printError } from '../ui/output.js';
 import { createSpinner } from '../ui/spinner.js';
 import { findAvailablePort, openBrowser, findWebDir } from '../utils/server.js';
 
@@ -19,11 +19,7 @@ export async function serveCommand(options: ServeOptions = {}): Promise<void> {
     process.exit(1);
   }
 
-  const spinner = createSpinner('Finding available port...');
-  spinner.start();
-
-  const port = options.port ?? (await findAvailablePort(3000));
-  spinner.succeed(`Selected port: ${chalk.bold.cyan(port)} (automatically detected available port)`);
+  const port = await findAvailablePort(options.port);
 
   const serverSpinner = createSpinner(`Starting PostGen Web UI on http://localhost:${port}...`);
   serverSpinner.start();
@@ -39,36 +35,31 @@ export async function serveCommand(options: ServeOptions = {}): Promise<void> {
 
   let serverStarted = false;
 
-  child.stdout?.on('data', (data: Buffer) => {
-    const output = data.toString();
-    if (!serverStarted && (output.includes('Ready in') || output.includes('http://localhost') || output.includes('Local:'))) {
+  const handleStart = () => {
+    if (!serverStarted) {
       serverStarted = true;
       serverSpinner.succeed(chalk.bold.green(`PostGen Web UI is live at http://localhost:${port}`));
       console.log(chalk.dim('\n  Press Ctrl+C to stop the web server.\n'));
       openBrowser(`http://localhost:${port}`);
+    }
+  };
+
+  child.stdout?.on('data', (data: Buffer) => {
+    const output = data.toString();
+    if (output.includes('Ready in') || output.includes('http://localhost') || output.includes('Local:')) {
+      handleStart();
     }
   });
 
   child.stderr?.on('data', (data: Buffer) => {
     const output = data.toString();
-    // Next.js logs some info to stderr, only treat actual errors
-    if (!serverStarted && output.includes('Ready in')) {
-      serverStarted = true;
-      serverSpinner.succeed(chalk.bold.green(`PostGen Web UI is live at http://localhost:${port}`));
-      console.log(chalk.dim('\n  Press Ctrl+C to stop the web server.\n'));
-      openBrowser(`http://localhost:${port}`);
+    if (output.includes('Ready in')) {
+      handleStart();
     }
   });
 
-  // Timeout fallback in case stdout matcher missed
-  setTimeout(() => {
-    if (!serverStarted) {
-      serverStarted = true;
-      serverSpinner.succeed(chalk.bold.green(`PostGen Web UI launched at http://localhost:${port}`));
-      console.log(chalk.dim('\n  Press Ctrl+C to stop the web server.\n'));
-      openBrowser(`http://localhost:${port}`);
-    }
-  }, 4000);
+  // Fallback timer: open browser after 2.5 seconds max
+  setTimeout(handleStart, 2500);
 
   process.on('SIGINT', () => {
     child.kill('SIGINT');

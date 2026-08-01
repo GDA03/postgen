@@ -1,22 +1,29 @@
 // cli/src/utils/server.ts
 import net from 'net';
-import { exec, spawn } from 'child_process';
+import { exec } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 
-export async function findAvailablePort(startPort: number = 3000): Promise<number> {
+const PREFERRED_PORTS = [7678, 7679, 7680, 9876];
+
+export async function findAvailablePort(customPort?: number): Promise<number> {
+  if (customPort) return customPort;
+
+  for (const port of PREFERRED_PORTS) {
+    const isFree = await isPortAvailable(port);
+    if (isFree) return port;
+  }
+  return PREFERRED_PORTS[0];
+}
+
+function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
-    function tryPort(port: number) {
-      const server = net.createServer();
-      server.once('listen', () => {
-        server.close(() => resolve(port));
-      });
-      server.once('error', () => {
-        tryPort(port + 1);
-      });
-      server.listen(port, '127.0.0.1');
-    }
-    tryPort(startPort);
+    const server = net.createServer();
+    server.once('error', () => resolve(false));
+    server.once('listening', () => {
+      server.close(() => resolve(true));
+    });
+    server.listen(port, '127.0.0.1');
   });
 }
 
