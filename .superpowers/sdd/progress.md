@@ -10,4 +10,4 @@
 - [x] Task 7: CLI Application (`postgen`) (complete)
 - [x] Task 8: Web Dashboard (`@postgen/web`) (complete)
 - [x] Task 9: CI/CD Pipeline (complete)
-- [ ] Task 10: Documentation & Polish
+- [x] Task 10: Documentation & Polish (complete)
