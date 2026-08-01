@@ -1,6 +1,7 @@
 // apps/web/components/settings-panel.tsx
 'use client';
 
+import { useState } from 'react';
 import type { PostGenConfig, AIProvider } from '@postgen/shared';
 
 interface SettingsPanelProps {
@@ -10,6 +11,8 @@ interface SettingsPanelProps {
 }
 
 export function SettingsPanel({ config, onConfigChange, onClose }: SettingsPanelProps) {
+  const [isSaving, setIsSaving] = useState(false);
+
   const providers: { id: AIProvider; label: string; defaultBaseUrl?: string }[] = [
     { id: 'gemini', label: 'Google Gemini (Fast & Recommended)' },
     { id: '9router', label: '9Router (Local AI Endpoint)', defaultBaseUrl: 'http://localhost:9000/v1' },
@@ -27,14 +30,57 @@ export function SettingsPanel({ config, onConfigChange, onClose }: SettingsPanel
     '9router': ['gpt-4o', 'gpt-4o-mini', 'claude-3-5-sonnet'],
   };
 
+  const getKeyForProvider = (p: AIProvider): string => {
+    if (p === 'gemini') return config.geminiKey || config.apiKey || '';
+    if (p === 'openai') return config.openaiKey || config.apiKey || '';
+    if (p === 'anthropic') return config.anthropicKey || config.apiKey || '';
+    if (p === 'openrouter') return config.openrouterKey || config.apiKey || '';
+    return config.apiKey || '';
+  };
+
   const handleProviderSelect = (provider: AIProvider) => {
     const selected = providers.find((p) => p.id === provider);
+    const existingKey = getKeyForProvider(provider);
     onConfigChange({
       ...config,
       provider,
+      apiKey: existingKey,
       baseUrl: selected?.defaultBaseUrl ?? config.baseUrl,
       model: undefined, // reset to default
     });
+  };
+
+  const handleApiKeyChange = (keyVal: string) => {
+    const updated: PostGenConfig = {
+      ...config,
+      apiKey: keyVal,
+    };
+
+    if (config.provider === 'gemini') updated.geminiKey = keyVal;
+    if (config.provider === 'openai') updated.openaiKey = keyVal;
+    if (config.provider === 'anthropic') updated.anthropicKey = keyVal;
+    if (config.provider === 'openrouter') updated.openrouterKey = keyVal;
+
+    onConfigChange(updated);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // 1. Save in localStorage
+      localStorage.setItem('postgen_config_vault', JSON.stringify(config));
+
+      // 2. Persist to system store via API
+      await fetch('/api/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      });
+    } catch {
+      // ignore network error
+    }
+    setIsSaving(false);
+    onClose();
   };
 
   const currentSuggestions = modelSuggestions[config.provider] ?? [];
@@ -65,9 +111,14 @@ export function SettingsPanel({ config, onConfigChange, onClose }: SettingsPanel
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
-            ⚙️ AI Provider &amp; Model Settings
-          </h3>
+          <div>
+            <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
+              ⚙️ AI Credentials &amp; Vault
+            </h3>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+              Credentials are automatically saved locally and shared with PostGen CLI.
+            </p>
+          </div>
           <button
             onClick={onClose}
             style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '20px', cursor: 'pointer' }}
@@ -97,17 +148,17 @@ export function SettingsPanel({ config, onConfigChange, onClose }: SettingsPanel
           {config.provider !== '9router' && (
             <div>
               <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', color: 'var(--text-secondary)' }}>
-                API Key
+                API Key ({config.provider.toUpperCase()})
               </label>
               <input
                 type="password"
                 className="input-field"
-                placeholder="Enter your API Key"
+                placeholder={`Enter your ${config.provider} API Key`}
                 value={config.apiKey}
-                onChange={(e) => onConfigChange({ ...config, apiKey: e.target.value })}
+                onChange={(e) => handleApiKeyChange(e.target.value)}
               />
               <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                🔒 Stored locally in your browser session. Never uploaded anywhere else.
+                🔒 Stored locally in your system config. Never sent to any 3rd party server.
               </p>
             </div>
           )}
@@ -164,8 +215,8 @@ export function SettingsPanel({ config, onConfigChange, onClose }: SettingsPanel
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '28px' }}>
-          <button className="btn-primary" onClick={onClose} style={{ width: '100%' }}>
-            ✅ Save Settings
+          <button className="btn-primary" onClick={handleSave} disabled={isSaving} style={{ width: '100%' }}>
+            {isSaving ? '⏳ Saving...' : '💾 Save & Persist Credentials'}
           </button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 // apps/web/app/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Stepper } from '../components/stepper';
 import { OnboardingBanner } from '../components/onboarding-banner';
 import { ProjectInput } from '../components/project-input';
@@ -29,6 +29,38 @@ export default function HomePage() {
   const [options, setOptions] = useState<GenerationOptions>(DEFAULT_GENERATION_OPTIONS);
   const [showSettings, setShowSettings] = useState(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  // Load persistent credentials on mount
+  useEffect(() => {
+    async function loadSavedCredentials() {
+      // 1. Try system config API
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          const sysConfig = await res.json();
+          if (sysConfig && (sysConfig.apiKey || sysConfig.provider)) {
+            setConfig((prev) => ({ ...prev, ...sysConfig }));
+            return;
+          }
+        }
+      } catch {
+        // ignore
+      }
+
+      // 2. Fallback to localStorage vault
+      const localVault = localStorage.getItem('postgen_config_vault');
+      if (localVault) {
+        try {
+          const parsed = JSON.parse(localVault);
+          setConfig(parsed);
+        } catch {
+          // ignore
+        }
+      }
+    }
+
+    loadSavedCredentials();
+  }, []);
 
   const addToast = (message: string, type: 'success' | 'info' | 'warning' | 'error' = 'info') => {
     const id = Math.random().toString(36).substring(2, 9);
@@ -112,6 +144,7 @@ export default function HomePage() {
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button className="btn-secondary" onClick={() => setShowSettings(true)}>
             ⚙️ AI Provider ({config.provider})
+            {config.apiKey || config.provider === '9router' ? ' 🔒 Saved' : ''}
           </button>
         </div>
       </header>
@@ -166,7 +199,10 @@ export default function HomePage() {
       {showSettings && (
         <SettingsPanel
           config={config}
-          onConfigChange={setConfig}
+          onConfigChange={(newCfg) => {
+            setConfig(newCfg);
+            localStorage.setItem('postgen_config_vault', JSON.stringify(newCfg));
+          }}
           onClose={() => setShowSettings(false)}
         />
       )}

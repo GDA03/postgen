@@ -125,6 +125,10 @@ export interface PostGenConfig {
   baseUrl?: string;
   imageProvider?: 'gemini' | 'openai' | 'none';
   imageModel?: string;
+  geminiKey?: string;
+  openaiKey?: string;
+  anthropicKey?: string;
+  openrouterKey?: string;
 }
 
 export const DEFAULT_CONFIG: PostGenConfig = {
