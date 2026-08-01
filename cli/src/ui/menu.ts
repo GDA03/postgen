@@ -107,15 +107,7 @@ export async function showInteractiveMenu(): Promise<void> {
     }
 
     case 'serve': {
-      const answers = await inquirer.prompt([
-        {
-          type: 'number',
-          name: 'port',
-          message: 'Enter Web UI port:',
-          default: 3000,
-        },
-      ]);
-      await serveCommand({ port: answers.port });
+      await serveCommand();
       break;
     }
 

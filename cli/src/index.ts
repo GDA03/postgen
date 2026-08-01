@@ -71,9 +71,9 @@ configCmd
 
 program
   .command('serve')
-  .description('Start the PostGen web dashboard')
-  .option('-p, --port <port>', 'Port number', '3000')
-  .action((options) => serveCommand({ port: parseInt(options.port, 10) }));
+  .description('Start the PostGen web dashboard (auto-detects open port)')
+  .option('-p, --port <port>', 'Custom port number (optional)')
+  .action((options) => serveCommand(options.port ? { port: parseInt(options.port, 10) } : {}));
 
 program
   .argument('[path]', 'Project path (or run interactive menu if omitted)')
