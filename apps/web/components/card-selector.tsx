@@ -56,7 +56,6 @@ export function CardSelector({ context }: CardSelectorProps) {
 
       {cardUrl && (
         <div style={{ marginTop: '16px' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={cardUrl} alt="LinkedIn card" style={{ width: '100%', borderRadius: 'var(--radius-md)' }} />
           <a
             href={cardUrl}

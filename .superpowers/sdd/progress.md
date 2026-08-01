@@ -9,5 +9,5 @@
 - [x] Task 6: Template Card Generator (`@postgen/core` — Cards Module) (complete)
 - [x] Task 7: CLI Application (`postgen`) (complete)
 - [x] Task 8: Web Dashboard (`@postgen/web`) (complete)
-- [ ] Task 9: CI/CD Pipeline
+- [x] Task 9: CI/CD Pipeline (complete)
 - [ ] Task 10: Documentation & Polish

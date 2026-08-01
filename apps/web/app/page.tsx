@@ -17,7 +17,7 @@ export default function HomePage() {
   const [context, setContext] = useState<ProjectContext | null>(null);
   const [post, setPost] = useState<LinkedInPost | null>(null);
   const [config, setConfig] = useState<PostGenConfig>(DEFAULT_CONFIG);
-  const [options, setOptions] = useState<GenerationOptions>(DEFAULT_GENERATION_OPTIONS);
+  const [options] = useState<GenerationOptions>(DEFAULT_GENERATION_OPTIONS);
   const [error, setError] = useState<string>('');
   const [showSettings, setShowSettings] = useState(false);
 
