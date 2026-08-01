@@ -1,7 +1,7 @@
 # Progress Ledger
 
 ## Tasks
-- [ ] Task 1: Monorepo Scaffolding
+- [x] Task 1: Monorepo Scaffolding (complete)
 - [ ] Task 2: Shared Types Package (`@postgen/shared`)
 - [ ] Task 3: Project Scanner (`@postgen/core` — Scanner Module)
 - [ ] Task 4: AI Provider Abstraction (`@postgen/ai`)
